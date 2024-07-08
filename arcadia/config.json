@@ -1,0 +1,10 @@
+{
+    "PROJECT_DIR"{
+        "BATIDAIR":"//vmli-cal11/airpaca/src/ARCADIA/DATABATI",
+        "LAND_USE":"//vmli-cal11/airpaca/src/ARCADIA/DATALDU",
+        "DIGITAL_TERRAIN_MODEL":"//vmli-cal11/airpaca/src/ARCADIA/DATAMNT",
+        "WRF_DATA":"//vmli-cal11/airpaca/src/ARCADIA/DATAWRF",
+        "PSPRAY":"//vmli-cal11/airpaca/src/ARCADIA/PSPRAY",
+        "PSWIFT":"//vmli-cal11/airpaca/src/ARCADIA/PSWIFT",
+    }
+}
