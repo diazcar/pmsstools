@@ -1,0 +1,8 @@
+V_INDEX;V_NAME;V_UNIT;V_MIN;V_MAX;V_ITYPE
+1;Speed;m/s;0;100;1
+2;Direction;deg;0;360;2
+3;Height;m;0;1000;4
+4;TEMP;C;-50;50;3
+5;rain;mm/hr;0;100;6
+6;RH;%;0;99.99;7
+7;Pressure;Pa;20000;110000;15
