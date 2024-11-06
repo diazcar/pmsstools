@@ -4,10 +4,11 @@
 ###############################################################################
 import pandas as pd
 import argparse
-from src.utils import (
+from src.meteo import (
+    create_obser_x_x,
     list_of_strings
 )
-from xair import request_xr, wrap_xair_request
+from src.xair import request_xr, wrap_xair_request
 
 parser = argparse.ArgumentParser(
     description="""
@@ -17,42 +18,87 @@ parser = argparse.ArgumentParser(
 )
 
 parser.add_argument(
-    '-sites', '--sites_names',
+    '-s', '--sites_names',
     help='Xair site name',
-    type=list_of_strings(),
+    type=list_of_strings,
     default='NCA',
     metavar='\b',
 )
+
 parser.add_argument(
-    '-o', '--output',
-    help='CSV output directory'
+    '-n', '--name',
+    help='',
+    default='OBSER',
+    metavar='\b',
 )
 
 parser.add_argument(
-    '-dr', '--date_range',
-    help="""Date range for data in str format :
-    YYYY-MM-DDT00:00:00Z,YYYY-MM-DDT00:00:00Z""",
-    default='2024-08-01T00:00:00Z,2024-09-01T00:00:00Z'
+    '-o', '--outdir',
+    help='CSV output directory',
+    default='./'
 )
+
+parser.add_argument(
+    '-sd', '--start_date',
+    help="""Start date for data in str format :
+    YYYY-MM-DDT00:00:00""",
+    default='2024-08-01T00:00:00'
+)
+
+parser.add_argument(
+    '-ed', '--end_date',
+    help="""End data for data in str format :
+    YYYY-MM-DDT00:00:00""",
+    default='2024-09-01T00:00:00',
+)
+
+parser.add_argument(
+    '-fill', '--fill_columns',
+    help='',
+    metavar='\b'
+)
+
+# parser.add_argument(
+#     '-met', '--meteo_dict',
+#     help="""
+#     Dictionary of meteorologic variables for station :
+#     {'AEROPO': '60'}' for precipitation from the Nice
+#     Aeroport station
+#     """,
+#     default={'AEROPO': '60'},
+#     type={str:str},
+
+# )
 
 args = parser.parse_args()
 
 
 if __name__ == "__main__":
 
-    site_info = request_xr(
-        sites=args.sites_names,
-        folder='sites',
-    )
+    for i,site in enumerate(args.sites_names):
 
-    data = wrap_xair_request(
-        fromtime=args.date_range.split(',')[0],
-        totime=args.date_range.split(',')[1],
-        sites=args.sites,
-        physicals='51,52,53,57,58,60',
-        datatype='base',
-    )
+        site_info = request_xr(
+            sites=site,
+            folder='sites',
+        )
 
-    site_info.to_csv('./notebook/sites.csv')
+        data = wrap_xair_request(
+            fromtime=args.start_date,
+            totime=args.end_date,
+            sites=site,
+            physicals='51,52,53,54,58,60',
+            datatype='base',
+        )
+        print(data)
+        site_info.to_csv(f'./notebook/{site}.csv')
+        data.to_csv(f'./notebook/{site}_data.csv')
 
-    data.to_csv('./notebook/data.csv')
+        create_obser_x_x(
+            data_site=data,
+            site_info=site_info,
+            site_name=site,
+            s_index=i,
+            outdir=args.outdir,
+            name=args.name,
+            fill_col=args.fill_columns,
+        )

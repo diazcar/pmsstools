@@ -1,6 +1,8 @@
 # ---> Python
 #local
 !.gitkeep
+local
+data
 notebook
 projets
 # Byte-compiled / optimized / DLL files

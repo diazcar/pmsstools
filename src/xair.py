@@ -22,8 +22,9 @@ JSON_PATH_LISTS = {
             ['address', ['department', 'id']],
             ['address', ['department', 'labelDepartment']],
             ['address', ['commune', 'labelCommune']],
-            ['adress', 'latitude'],
-            ['adress', 'longitude'],
+            ['address', 'latitude'],
+            ['address', 'longitude'],
+            ['adress', 'altitude'],
             ['environment', 'locationTypeLabel'],
             ['environment', 'classTypeLabel'],
             ['sectors', 'zoneOfActivityLabel'],
@@ -62,6 +63,7 @@ HEADER_RENAME_LISTS = {
         'address.commune.labelCommune': 'labelCommune',
         'address.latitude': 'latitude',
         'address.longitude': 'longitude',
+        'address.altitude': 'altitude',
         'environment.locationTypeLabel': 'locationTypeLabel',
         'environment.classTypeLabel': 'classTypeLabel',
         'sectors.zoneOfActivityLabel': 'zoneOfActivityLabel',
@@ -106,14 +108,18 @@ DATATYPES = {
     'horaire': 'hourly'
 }
 
+DUPLICATES_LIST = [
+    '24', '39', '68',
+]
+
 
 def wrap_xair_request(
         fromtime: str,
         totime: str,
-        keys: str,
         sites: list[str,],
         physicals: list[str,],
         datatype: str = "hourly",
+        clean_duplicates: bool = False,
 ) -> pd.DataFrame:
 
     xair_site_measures = request_xr(
@@ -142,11 +148,12 @@ def wrap_xair_request(
 
     xair_data = mask_aorp(xair_data_raw)
 
-    xair_data = mask_duplicates(
-        data=xair_data,
-        site_name=sites,
-        poll_iso=physicals,
-        )
+    if clean_duplicates is True:
+        xair_data = mask_duplicates(
+            data=xair_data,
+            site_name=sites,
+            poll_iso=physicals,
+            )
 
     return (xair_data)
 
@@ -257,6 +264,8 @@ def request_xr(
         f"measures={measures}&"
         f"physicals={physicals}&"
     )
+
+    print(url)
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore")
 
@@ -433,15 +442,20 @@ def mask_duplicates(
     site_name: str,
     poll_iso: str,
 ):
-    if poll_iso == '24':
-        data_out = data[data['id'].str.contains(f'PC{site_name[:2]}')]
-    if poll_iso == '39':
-        data_out = data[data['id'].str.contains(f'P2{site_name[:2]}')]
-    if poll_iso == '68':
-        for id in data.id.unique():
-            if f'PM1{site_name[:2]}'.lower() in str(id).lower():
-                data_out = data[data['id'].str.contains(f'PM1{site_name[:2]}')]
-                break
-            else:
-                data_out = data[data['id'] == data['id'].unique()[0]]
-    return data_out
+    if poll_iso in DUPLICATES_LIST:
+        if poll_iso == '24':
+            data_out = data[data['id'].str.contains(f'PC{site_name[:2]}')]
+        if poll_iso == '39':
+            data_out = data[data['id'].str.contains(f'P2{site_name[:2]}')]
+        if poll_iso == '68':
+            for id in data.id.unique():
+                if f'PM1{site_name[:2]}'.lower() in str(id).lower():
+                    data_out = data[
+                        data['id'].str.contains(f'PM1{site_name[:2]}')
+                        ]
+                    break
+                else:
+                    data_out = data[data['id'] == data['id'].unique()[0]]
+        return data_out
+    else:
+        return data
