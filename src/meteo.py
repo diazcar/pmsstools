@@ -107,7 +107,7 @@ def create_obser_x_x(
 
             values = data_site[
                 data_site['id']
-                .str.contains(f'{short_name}{site_name[:3].strip(' ')}')
+                .str.contains(f"{short_name}{site_name[:3].strip(' ')}")
             ]['value'].values
 
             if col == '7_VAL':

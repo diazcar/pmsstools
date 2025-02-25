@@ -41,13 +41,20 @@ JSON_PATH_LISTS = {
             ['unit', 'id'],
         ],
     },
-    'data': {
-        'record_path': ['sta', 'data',],
-        'meta': [
-            'id',
-            ['sta', 'unit', 'id'],
-        ],
-    },
+    'data_sta': {
+            'record_path': ['sta', 'data'],
+            'meta': [
+                'id',
+                ['sta', 'unit', 'id'],
+            ],
+        },
+    'data_hourly': {
+            'record_path': ['hourly', 'data'],
+            'meta': [
+                'id',
+                ['sta', 'unit', 'id'],
+            ],
+        },
     'physicals': {
         'record_path': None,
         'meta': None,
@@ -266,6 +273,15 @@ def request_xr(
     )
 
     print(url)
+
+    if folder == 'data':
+        if datatype == "base":
+            folder_key = f'{folder}_sta'
+        if datatype == 'hourly':
+            folder_key = f'{folder}_hourly'
+    else:
+        folder_key = folder
+
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore")
 
@@ -274,8 +290,8 @@ def request_xr(
             ).json()[DATA_KEYS[folder]]
         data = pd.json_normalize(
             data=request_data,
-            record_path=JSON_PATH_LISTS[folder]['record_path'],
-            meta=JSON_PATH_LISTS[folder]['meta'])
+            record_path=JSON_PATH_LISTS[folder_key]['record_path'],
+            meta=JSON_PATH_LISTS[folder_key]['meta'])
         for col in data.columns:
             if col not in list(HEADER_RENAME_LISTS[folder].keys()):
                 data[col] = np.nan

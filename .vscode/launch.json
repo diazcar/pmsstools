@@ -12,10 +12,10 @@
             "console": "integratedTerminal",
             "args": [
                 "-s", "NCA",
-                "-o", "./projets/calibration",
+                "-o", "./projets/arcadia",
                 "-n", "NCA",
-                "-sd", "2019-08-01T00:00:00",
-                "-ed", "2019-09-01T00:00:00",
+                "-sd", "2024-09-24T00:00:00",
+                "-ed", "2024-09-25T00:00:00",
                 "-fill", "True"
             ]     
         }

@@ -1,12 +1,11 @@
 ###############################################################################
-#This script genarates OBSER_X_X.csv and OBSER_stations for SPRADSG
+# This script genarates OBSER_X_X.csv and OBSER_stations for SPRADSG
 # Author :  Carlos Diaz
 ###############################################################################
-import pandas as pd
 import argparse
 from src.meteo import (
     create_obser_x_x,
-    list_of_strings
+    list_of_strings,
 )
 from src.xair import request_xr, wrap_xair_request
 
@@ -75,7 +74,7 @@ args = parser.parse_args()
 
 if __name__ == "__main__":
 
-    for i,site in enumerate(args.sites_names):
+    for i, site in enumerate(args.sites_names):
 
         site_info = request_xr(
             sites=site,

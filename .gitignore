@@ -1,10 +1,14 @@
 # ---> Python
 #local
 !.gitkeep
-local
-data
-notebook
-projets
+
+*_P
+.vscode
+local/*
+data/*
+notebook/*
+projets/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
